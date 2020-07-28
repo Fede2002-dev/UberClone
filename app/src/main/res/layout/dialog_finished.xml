@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_trip_finished"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Su viaje ha terminado! Puede cobrar al pasajero."
+        android:textSize="26sp"
+        android:fontFamily="@font/bold"
+        android:textColor="@color/colorPrimary"
+        android:textAlignment="center"
+        />
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btn_done"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:textColor="@color/colorWhite"
+            android:background="@drawable/button"
+            android:text="Hecho!"
+            />
+    </LinearLayout>
+</LinearLayout>

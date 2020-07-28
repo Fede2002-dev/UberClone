@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">UberApp</string>
+    <string name="hint_register_es">Eres nuevo por aqui? Registrate</string>
+    <string name="hint_usernamelogin">Nombre de usuario</string>
+    <string name="hint_passwordlogin">Contraseña</string>
+    <string name="btn_login">Iniciar sesion</string>
+    <string name="hint_email">Correo electronico</string>
+    <string name="hint_register_welcome">Registrese de forma gratuita!</string>
+    <string name="tv_gotologin">Ya tienes una cuenta? Inicia sesion!</string>
+    <string name="hint_confirmpassword">Confirmar contraseña</string>
+    <string name="hint_name">Nombre completo</string>
+    <string name="google_maps_key">AIzaSyDhfhc8lj95UVEdPLVZY1eWD8SLwpTW4cc</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
