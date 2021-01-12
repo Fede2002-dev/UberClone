@@ -102,6 +102,7 @@ class LoginActivity : AppCompatActivity() {
                                 })
                             }
                         } else {
+                            val e = task.exception
                             binding.btnLogin.isEnabled = true
                             binding.btnLogin.text = "Iniciar sesion"
                             Toast.makeText(this@LoginActivity, "Revise su email y/o contraseña.", Toast.LENGTH_SHORT).show()

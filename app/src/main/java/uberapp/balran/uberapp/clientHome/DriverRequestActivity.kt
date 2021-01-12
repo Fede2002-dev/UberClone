@@ -1,5 +1,6 @@
 package uberapp.balran.uberapp.clientHome
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
@@ -9,8 +10,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
+import androidx.lifecycle.ViewModelProvider
 import com.example.uberapp.R
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -23,13 +23,12 @@ import com.google.android.gms.maps.model.Polyline
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import org.json.JSONException
-import org.json.JSONObject
 import uberapp.balran.uberapp.utilities.FindRoutes
 import uberapp.balran.uberapp.pojos.Trip
 import java.util.*
 
 class DriverRequestActivity : AppCompatActivity(), OnMapReadyCallback {
+    private lateinit var viewmodel:DriverRequestActivityViewModel
     private lateinit var tvOrigin: TextView
     private lateinit var tvDestination: TextView
     private lateinit var tvTime: TextView
@@ -54,11 +53,14 @@ class DriverRequestActivity : AppCompatActivity(), OnMapReadyCallback {
     var start: LatLng?=null
     var end: LatLng?=null
     //polyline object
-    private var polylines: List<Polyline>? =null
+    private var polylines: MutableList<Polyline>? =null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_driver_request)
+
+        //start viewmodel
+        viewmodel= ViewModelProvider(this).get(DriverRequestActivityViewModel::class.java)
 
         //Iniciar variables
         extra = intent.extras!!
@@ -91,14 +93,14 @@ class DriverRequestActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        map!!.setMinZoomPreference(15f)
+        map.setMinZoomPreference(15f)
 
         //Inicializar variables
         start = LatLng(extra.getDouble("start_lat"), extra.getDouble("start_long"))
         end = LatLng(extra.getDouble("end_lat"), extra.getDouble("end_long"))
         if (start != null && end != null) {
-            map!!.animateCamera(CameraUpdateFactory.newLatLng(end))
-            findRoutes = FindRoutes(this, this, map, polylines, start, end)
+            map.animateCamera(CameraUpdateFactory.newLatLng(end))
+            findRoutes = FindRoutes(this, this, map, polylines, start!!, end!!)
             findRoutes.findroutes(start, end)
             MyAsyncTask().execute()
         } else {
@@ -107,6 +109,7 @@ class DriverRequestActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     //Custom methods
+    @SuppressLint("StaticFieldLeak")
     private inner class MyAsyncTask : AsyncTask<Void?, Void?, Void?>() {
 
         override fun onPostExecute(result: Void?) {
@@ -117,7 +120,7 @@ class DriverRequestActivity : AppCompatActivity(), OnMapReadyCallback {
             startMarker.title("Inicio")
             startMarker.flat(true)
             startMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_client))
-            map!!.addMarker(startMarker)
+            map.addMarker(startMarker)
         }
 
         override fun doInBackground(vararg params: Void?): Void? {
@@ -128,7 +131,7 @@ class DriverRequestActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun onClickMethods() {
         btnConfirmTrip.setOnClickListener {
-            if (cancelTrip == true) {
+            if (cancelTrip) {
                 Toast.makeText(this@DriverRequestActivity, "Cancelando", Toast.LENGTH_SHORT).show()
                 val r = database.getReference("Trips").child(mUser.uid).child(keyPush!!)
                 r.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -153,8 +156,14 @@ class DriverRequestActivity : AppCompatActivity(), OnMapReadyCallback {
                 keyPush = refTrip.push().key
                 refTrip.child(keyPush!!).setValue(trip)
                 refUser.child("trip").setValue(keyPush)
-                llamarAtopico(keyPush, start!!.latitude, start!!.longitude, end!!.latitude, end!!.longitude, extra.getString("origin"), extra.getString("destination"), findRoutes.distance, findRoutes.time)
+
+                //call viewmodel
+                viewmodel.llamarAtopico(keyPush, start!!.latitude, start!!.longitude, end!!.latitude, end!!.longitude, extra.getString("origin"), extra.getString("destination"), findRoutes.distance!!, findRoutes.time!!, mUser)
+
+
                 refIdDriver = refTrip.child(keyPush!!).child("id_driver")
+
+
                 listener = refIdDriver.addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -183,59 +192,7 @@ class DriverRequestActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun llamarAtopico(key: String?, start_latitude: Double, start_longitude: Double, end_latitude: Double, end_longitude: Double, start: String?, end: String?, distance: String, time: String) {
-        val requestQueue = Volley.newRequestQueue(applicationContext)
-        val json = JSONObject()
-        try {
-            json.put("to", "/topics/" + "trip_request")
-            val notificacion = JSONObject()
-            notificacion.put("id", mUser.uid)
-            notificacion.put("key", key)
-            notificacion.put("user_pos", "$start_latitude#$start_longitude")
-            notificacion.put("end_pos", "$end_latitude#$end_longitude")
-            notificacion.put("start", start)
-            notificacion.put("end", end)
-            notificacion.put("distance", distance)
-            notificacion.put("time", time)
-            json.put("data", notificacion)
-            val URL = "https://fcm.googleapis.com/fcm/send"
-            val request: JsonObjectRequest = object : JsonObjectRequest(Method.POST, URL, json, null, null) {
-                override fun getHeaders(): Map<String, String> {
-                    val header: MutableMap<String, String> = HashMap()
-                    header["content-type"] = "application/json"
-                    header["authorization"] = "key=AAAAF1VGxIE:APA91bG_6Ifrnq5Bh_Ts1b9JidvQiEb3KXotp9dxIipmdgYqzGSSUzKH0XOXdY3GSnMvAdIgHLJtP2FRDNQ1AHDf7W6lGSUEneq20Fl6xcvjXsCuup0CnaFbgQCRokYy3N0RhZdQKUrB"
-                    return header
-                }
-            }
-            requestQueue.add(request)
-        } catch (ex: JSONException) {
-            ex.printStackTrace()
-        }
-    }
-
-    override fun onDestroy() {
-        /*if(!key_push.equals("")) {
-            final DatabaseReference r = database.getReference("Trips").child(mUser.getUid()).child(key_push);
-            r.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if(snapshot.exists()){
-                        r.removeValue();
-                        ref_id_driver.removeEventListener(listener);
-                        key_push =null;
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        }*/
-        super.onDestroy()
-    }
-
     companion object {
-        var map: GoogleMap? = null
+        lateinit var map: GoogleMap
     }
 }

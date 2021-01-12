@@ -1,46 +1,30 @@
-package uberapp.balran.uberapp.utilities;
+package uberapp.balran.uberapp.utilities
 
-import android.util.Log;
+import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.firebase.messaging.RemoteMessage
+import uberapp.balran.uberapp.DriverHomeActivity
 
-import uberapp.balran.uberapp.DriverHomeActivity;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
-
-public class FCM extends FirebaseMessagingService {
-    DriverHomeActivity a;
-    @Override
-    public void onNewToken(String s) {
-        super.onNewToken(s);
-        Log.e("t", s);
+class FCM : FirebaseMessagingService() {
+    var a: DriverHomeActivity? = null
+    override fun onNewToken(s: String) {
+        super.onNewToken(s)
     }
 
-    @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
-        super.onMessageReceived(remoteMessage);
-
-
-        Log.e("TAG","mensaje recibido de: " + remoteMessage.getFrom());
-
-        Log.e("msg", "mgs");
-
-        if(remoteMessage.getData().size()>0){
-            Log.e("msg", "el id es: " + remoteMessage.getData().get("id"));
-            Log.e("msg", "el id es: " + remoteMessage.getData().get("user_pos"));
-
-            if(DriverHomeActivity.A !=null){
-                String destination = remoteMessage.getData().get("user_pos");
-                String end_pos = remoteMessage.getData().get("end_pos");
-                String key = remoteMessage.getData().get("key");
-                String id = remoteMessage.getData().get("id");
-                String start = remoteMessage.getData().get("start");
-                String end = remoteMessage.getData().get("end");
-                String distance = remoteMessage.getData().get("distance");
-                String time = remoteMessage.getData().get("time");
-                a = DriverHomeActivity.A;
-                a.comm(id,key, destination,end_pos,start,end, distance, time);
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        super.onMessageReceived(remoteMessage)
+        if (remoteMessage.data.isNotEmpty()) {
+            if (DriverHomeActivity.A != null) {
+                val destination = remoteMessage.data["user_pos"]
+                val endPos = remoteMessage.data["end_pos"]
+                val key = remoteMessage.data["key"]
+                val id = remoteMessage.data["id"]
+                val start = remoteMessage.data["start"]
+                val end = remoteMessage.data["end"]
+                val distance = remoteMessage.data["distance"]
+                val time = remoteMessage.data["time"]
+                a = DriverHomeActivity.A
+                DriverHomeActivity.comm(id, key, destination!!, endPos!!, start!!, end!!, distance!!, time!!)
             }
-
         }
-
     }
 }

@@ -153,10 +153,10 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
                             override fun onDataChange(snapshot: DataSnapshot) {
                                 if (snapshot.exists()) {
                                     val trip = snapshot.getValue(Trip::class.java)
-                                    val startT = trip!!.start.split("#".toRegex()).toTypedArray()
+                                    val startT = trip!!.start!!.split("#".toRegex()).toTypedArray()
                                     val start_lat = startT[0].toDouble()
                                     val start_long = startT[1].toDouble()
-                                    val endT = trip.destination.split("#".toRegex()).toTypedArray()
+                                    val endT = trip.destination!!.split("#".toRegex()).toTypedArray()
                                     val end_lat = endT[0].toDouble()
                                     val end_long = endT[1].toDouble()
                                     val ori = getAddress(start_lat, start_long)

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -44,7 +43,7 @@ class TripActivity : AppCompatActivity(), OnMapReadyCallback {
     var driverLoca: LatLng? = null
 
     //polyline object
-    private val polylines: List<Polyline>? = null
+    private val polylines: MutableList<Polyline>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip)
@@ -116,7 +115,6 @@ class TripActivity : AppCompatActivity(), OnMapReadyCallback {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     val name = snapshot.getValue(String::class.java)
-                    Log.e("msg", name)
                     tv_driver_name!!.text = name
                 }
             }
@@ -175,7 +173,7 @@ class TripActivity : AppCompatActivity(), OnMapReadyCallback {
                                     m = map!!.addMarker(marker)
                                     val start = LatLng(extra!!.getDouble("start_lat"), extra!!.getDouble("start_long"))
                                     val end = LatLng(extra!!.getDouble("end_lat"), extra!!.getDouble("end_long"))
-                                    findRoutes = FindRoutes(ctx, a, map, polylines, start, end)
+                                    findRoutes = FindRoutes(ctx!!, a!!, map!!, polylines, start, end)
                                     findRoutes!!.findroutes(start, end)
                                     state = null
                                 }
@@ -202,7 +200,7 @@ class TripActivity : AppCompatActivity(), OnMapReadyCallback {
                     val end = LatLng(extra!!.getDouble("start_lat"), extra!!.getDouble("start_long"))
                     if (state != null) {
                         if (state != "driving") {
-                            findRoutes = FindRoutes(ctx, a, map, polylines, start, end)
+                            findRoutes = FindRoutes(ctx!!, a!!, map!!, polylines, start, end)
                             findRoutes!!.findroutes(start, end)
                             MyAsyncTask().execute()
                         }

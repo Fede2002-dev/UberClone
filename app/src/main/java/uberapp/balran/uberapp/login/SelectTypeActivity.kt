@@ -1,48 +1,42 @@
-package uberapp.balran.uberapp.login;
+package uberapp.balran.uberapp.login
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.example.uberapp.R
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
-
-import com.example.uberapp.R;
-
-public class SelectTypeActivity extends AppCompatActivity implements View.OnClickListener {
-    Button btn_selectDriver, btn_selecClient;
-    public static Activity A;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_select_type);
+class SelectTypeActivity : AppCompatActivity(), View.OnClickListener {
+    private var btnSelectDriver: Button? = null
+    private var btnSelectClient: Button? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_select_type)
 
         //Declarando componentes
-        A = this;
-        btn_selectDriver = findViewById(R.id.btn_selectDriver);
-        btn_selecClient = findViewById(R.id.btn_selectClient);
+        A = this
+        btnSelectDriver = findViewById(R.id.btn_selectDriver)
+        btnSelectClient = findViewById(R.id.btn_selectClient)
 
         //Metodos Onclick
-
-        btn_selectDriver.setOnClickListener(this);
-        btn_selecClient.setOnClickListener(this);
-
+        btnSelectDriver!!.setOnClickListener(this)
+        btnSelectClient!!.setOnClickListener(this)
     }
 
-    @Override
-    public void onClick(View v) {
-        if(v.getId() == R.id.btn_selectDriver){
-            Intent i = new Intent(SelectTypeActivity.this, DriverRegisterActivity.class);
-            startActivity(i);
-            Toast.makeText(this, "Driver", Toast.LENGTH_SHORT).show();
-        }
-        else if(v.getId() == R.id.btn_selectClient){
-            Intent i = new Intent(SelectTypeActivity.this, RegisterActivity.class);
-            startActivity(i);
-            Toast.makeText(this, "Client", Toast.LENGTH_SHORT).show();
+    override fun onClick(v: View) {
+        if (v.id == R.id.btn_selectDriver) {
+            val i = Intent(this@SelectTypeActivity, DriverRegisterActivity::class.java)
+            startActivity(i)
+        } else if (v.id == R.id.btn_selectClient) {
+            val i = Intent(this@SelectTypeActivity, RegisterActivity::class.java)
+            startActivity(i)
         }
     }
 
+    companion object {
+        var A: Activity? = null
+    }
 }

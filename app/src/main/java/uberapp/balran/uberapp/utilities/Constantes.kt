@@ -1,5 +1,5 @@
-package uberapp.balran.uberapp.utilities;
+package uberapp.balran.uberapp.utilities
 
-public class Constantes {
-    public static final int MY_PERMISSION_REQUEST_FINE_LOCATION = 1;
+object Constantes {
+    const val MY_PERMISSION_REQUEST_FINE_LOCATION = 1
 }

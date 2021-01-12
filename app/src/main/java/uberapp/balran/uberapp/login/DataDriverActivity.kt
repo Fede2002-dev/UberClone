@@ -1,115 +1,105 @@
-package uberapp.balran.uberapp.login;
+package uberapp.balran.uberapp.login
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.example.uberapp.R
+import com.example.uberapp.databinding.ActivityDataDriverBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import uberapp.balran.uberapp.DriverHomeActivity
+import uberapp.balran.uberapp.login.DataDriverActivity
+import uberapp.balran.uberapp.pojos.UserDriver
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+class DataDriverActivity : AppCompatActivity() {
+    private lateinit var binding:ActivityDataDriverBinding
 
-import uberapp.balran.uberapp.DriverHomeActivity;
-import com.example.uberapp.R;
-import uberapp.balran.uberapp.pojos.UserDriver;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+    private var mAuth: FirebaseAuth? = null
+    private var database: FirebaseDatabase? = null
+    private var ref: DatabaseReference? = null
 
-public class DataDriverActivity extends AppCompatActivity {
-    private Button btn_next;
-    private EditText et_matricula, et_nombre, et_dni, et_phone;
-    private FirebaseAuth mAuth;
-    private FirebaseDatabase database;
-    private DatabaseReference ref;
-    public static Activity A;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_data_driver);
-        A = this;
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding=ActivityDataDriverBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        A = this
 
         //Iniciando componentes de firebase
-        mAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference("Users").child("drivers");
-
-        //Declarando componentes
-        btn_next = findViewById(R.id.btn_next);
-        et_matricula = findViewById(R.id.et_matricula);
-        et_nombre = findViewById(R.id.et_nombre);
-        et_dni = findViewById(R.id.et_dni);
-        et_phone = findViewById(R.id.et_phone);
+        mAuth = FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance()
+        ref = database!!.getReference("Users").child("drivers")
 
         //Variables para el registro
-        final String email = getIntent().getExtras().getString("email");
-        final String password = getIntent().getExtras().getString("password");
+        val email = intent.extras!!.getString("email")
+        val password = intent.extras!!.getString("password")
 
         //Metodos Onclick
-        btn_next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btn_next.setEnabled(false);
-                String name = et_nombre.getText().toString();
-                String matricula = et_matricula.getText().toString();
-                String dni = et_dni.getText().toString();
-                String phone = et_phone.getText().toString();
+        binding.btnNext.setOnClickListener(View.OnClickListener {
+            binding.btnNext.isEnabled = false
+            val name = binding.etNombre.text.toString()
+            val matricula = binding.etMatricula.text.toString()
+            val dni = binding.etDni.text.toString()
+            val phone = binding.etPhone.text.toString()
 
-                if(!name.isEmpty() && !matricula.isEmpty() && !dni.isEmpty() && !phone.isEmpty()){
-                    register(email, password, name, matricula, dni, phone);
-                }else{
-                    if(name.isEmpty()){
-                        btn_next.setEnabled(true);
-                        et_nombre.setError("Ingrese su nombre");
-                    }
-                    if(matricula.isEmpty()){
-                        btn_next.setEnabled(true);
-                        et_matricula.setError("Ingrese su matricula");
-                    }
-                    if(dni.isEmpty()){
-                        btn_next.setEnabled(true);
-                        et_dni.setError("Ingrese su dni");
-                    }
-                    if (phone.isEmpty()){
-                        btn_next.setEnabled(true);
-                        et_phone.setError("Ingrese su numero de telefono");
-                    }
+            if (name.isNotEmpty() && matricula.isNotEmpty() && dni.isNotEmpty() && phone.isNotEmpty()) {
+                register(email, password, name, matricula, dni, phone)
+
+            } else {
+                if (name.isEmpty()) {
+                    binding.btnNext.isEnabled = true
+                    binding.etNombre.error = "Ingrese su nombre"
+                    binding.btnNext.text="Siguiente"
+                }
+                if (matricula.isEmpty()) {
+                    binding.btnNext.isEnabled = true
+                    binding.etMatricula.error = "Ingrese su matricula"
+                    binding.btnNext.text="Siguiente"
+                }
+                if (dni.isEmpty()) {
+                    binding.btnNext.isEnabled = true
+                    binding.etDni.error = "Ingrese su dni"
+                    binding.btnNext.text="Siguiente"
+                }
+                if (phone.isEmpty()) {
+                    binding.btnNext.isEnabled = true
+                    binding.etPhone.error = "Ingrese su numero de telefono"
+                    binding.btnNext.text="Siguiente"
                 }
             }
-        });
-    }//Fin oncreate
+        })
+    } //Fin oncreate
 
-    public void register(final String email, String password, final String name, final String matricula, final String dni, final String phone){
-
+    private fun register(email: String?, password: String?, name: String?, matricula: String?, dni: String?, phone: String?) {
+        binding.btnNext.text="Registrando..."
         //Crear nuevo usuario
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    DatabaseReference reference = ref.child(user.getUid());
-                    UserDriver user1 = new UserDriver(name, user.getUid(), email, "disconnected", matricula, phone, dni, "", "");
-                    reference.setValue(user1);
-
-                    goToHome();
-                }else{
-                    Toast.makeText(DataDriverActivity.this, "Ha ocurrido un error. Intente nuevamente.", Toast.LENGTH_SHORT).show();
-                    btn_next.setEnabled(true);
-                }
+        mAuth!!.createUserWithEmailAndPassword(email!!, password!!).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val user = mAuth!!.currentUser
+                val reference = ref!!.child(user!!.uid)
+                val user1 = UserDriver(name, user.uid, email, "disconnected", matricula, phone, dni, "", "")
+                reference.setValue(user1)
+                goToHome()
+            } else {
+                Toast.makeText(this@DataDriverActivity, "Ha ocurrido un error. Intente nuevamente.", Toast.LENGTH_SHORT).show()
+                binding.btnNext.isEnabled = true
+                binding.btnNext.text="Siguiente"
             }
-        });
+        }
     }
 
-    private void goToHome() {
-        Intent i = new Intent(DataDriverActivity.this, DriverHomeActivity.class);
-        startActivity(i);
-        finish();
+    private fun goToHome() {
+        val i = Intent(this@DataDriverActivity, DriverHomeActivity::class.java)
+        startActivity(i)
+        finish()
     }
 
+    companion object {
+        var A: Activity? = null
+    }
 }
