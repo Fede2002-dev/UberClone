@@ -1,10 +1,8 @@
-package com.example.uberapp.Utilities;
+package uberapp.balran.uberapp.utilities;
 
-import android.app.Activity;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.example.uberapp.DriverHomeActivity;
+import uberapp.balran.uberapp.DriverHomeActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 

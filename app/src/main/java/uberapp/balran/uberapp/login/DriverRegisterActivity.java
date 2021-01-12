@@ -1,4 +1,4 @@
-package com.example.uberapp.Login;
+package uberapp.balran.uberapp.login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.uberapp.R;
 

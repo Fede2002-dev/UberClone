@@ -1,8 +1,7 @@
-package com.example.uberapp.Utilities;
+package uberapp.balran.uberapp.utilities;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -11,7 +10,6 @@ import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
-import com.example.uberapp.ClientHome.DriverRequestActivity;
 import com.example.uberapp.R;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;

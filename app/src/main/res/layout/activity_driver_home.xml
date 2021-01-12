@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DriverHomeActivity">
+    tools:context="uberapp.balran.uberapp.DriverHomeActivity">
 
     <include
         android:id="@+id/toolbar"
@@ -51,10 +51,10 @@
         android:id="@+id/iv_directions"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:srcCompat="@drawable/ic_google_maps"
         tools:ignore="VectorDrawableCompat" />
 

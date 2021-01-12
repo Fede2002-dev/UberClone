@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@color/colorPrimary"
     android:elevation="4dp"
-    android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">
+    android:theme="@style/AppToolbar">
 
 
 

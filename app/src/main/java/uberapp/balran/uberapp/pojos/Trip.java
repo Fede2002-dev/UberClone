@@ -1,4 +1,4 @@
-package com.example.uberapp.pojos;
+package uberapp.balran.uberapp.pojos;
 
 public class Trip {
     String id_driver;

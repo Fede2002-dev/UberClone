@@ -1,4 +1,4 @@
-package com.example.uberapp;
+package uberapp.balran.uberapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -18,7 +18,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,12 +27,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.uberapp.ClientHome.HomeActivity;
-import com.example.uberapp.ClientHome.TripActivity;
-import com.example.uberapp.Login.LoginActivity;
-import com.example.uberapp.Utilities.Constantes;
-import com.example.uberapp.Utilities.FindRoutes;
-import com.example.uberapp.pojos.Trip;
+import uberapp.balran.uberapp.login.LoginActivity;
+
+import com.example.uberapp.R;
+
+import uberapp.balran.uberapp.utilities.Constantes;
+import uberapp.balran.uberapp.utilities.FindRoutes;
+import uberapp.balran.uberapp.pojos.Trip;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -112,6 +112,7 @@ public class DriverHomeActivity extends AppCompatActivity implements OnMapReadyC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_driver_home);
 
         //Inicializando firebase
@@ -250,7 +251,7 @@ public class DriverHomeActivity extends AppCompatActivity implements OnMapReadyC
                             Float dist = distance(user_location.latitude,user_location.longitude,location.getLatitude(),location.getLongitude());
                             if(dist<50f){
                                 arrived=true;
-                                driverArrived();
+                                driverArrived(true);
                             }
                         }
                         if(tripCompleted==false){
@@ -280,7 +281,7 @@ public class DriverHomeActivity extends AppCompatActivity implements OnMapReadyC
                 // All location settings are satisfied. The client can initialize
                 // location requests here.
                 // ...
-                startLocationUpdates();
+                getLastLocation();
             }
         });
 
@@ -303,20 +304,25 @@ public class DriverHomeActivity extends AppCompatActivity implements OnMapReadyC
         });
     }
 
-    private void driverArrived() {
-        Toast.makeText(DriverHomeActivity.this, "Llegue", Toast.LENGTH_SHORT).show();
+    private void driverArrived(Boolean firstArrived) {
         map.clear();
-        ref_trip.child("state").setValue("driving");
+        if(firstArrived==true) {
+            ref_trip.child("state").setValue("driving");
+        }
         findRoutes=null;
         polylines=null;
         findRoutes = new FindRoutes(ctx,B,map,polylines, user_location, dest_location);
         findRoutes.findroutes(user_location, dest_location);
         new MyAsyncTask().execute();
         aux_location = dest_location;
+
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_car2);
+        MarkerOptions marker = new MarkerOptions().position(new LatLng(location.getLatitude(),location.getLongitude()));
+        marker.icon(icon);
+        m = map.addMarker(marker);
     }
 
     private void startLocationUpdates() {
-        Log.e("tag", "3");
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //Si el permiso es denegado, se solicita el permiso.
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constantes.MY_PERMISSION_REQUEST_FINE_LOCATION);
@@ -339,6 +345,7 @@ public class DriverHomeActivity extends AppCompatActivity implements OnMapReadyC
                     if (_location != null) {
                         location = _location;
                         checkIfHasTrip();
+                        startLocationUpdates();
                         map.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
                     } else {
                         Toast.makeText(DriverHomeActivity.this, "Error al obtener su ubicacion.", Toast.LENGTH_SHORT).show();
@@ -381,7 +388,6 @@ public class DriverHomeActivity extends AppCompatActivity implements OnMapReadyC
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.setMinZoomPreference(16);
-        map.getUiSettings().setMapToolbarEnabled(true);
     }
 
     @Override
@@ -495,9 +501,11 @@ public class DriverHomeActivity extends AppCompatActivity implements OnMapReadyC
                     if (id.equals("null") || id.equals(mUser.getUid())) {
                         ref_trip.child("id_driver").setValue(mUser.getUid());
                         LatLng start = new LatLng(location.getLatitude(), location.getLongitude());
-                        findRoutes = new FindRoutes(ctx,B,map,polylines, start, user_location);
-                        findRoutes.findroutes(start, user_location);
-                        new MyAsyncTask().execute();
+                        if(dialog!=null) {
+                            findRoutes = new FindRoutes(ctx, B, map, polylines, start, user_location);
+                            findRoutes.findroutes(start, user_location);
+                            new MyAsyncTask().execute();
+                        }
                         aux_location = user_location;
                         if(dialog!=null) {
                             dialog.dismiss();
@@ -524,7 +532,9 @@ public class DriverHomeActivity extends AppCompatActivity implements OnMapReadyC
             }
         });
 
-        ref_trip.child("state").setValue("comming");
+        if(dialog!=null) {
+            ref_trip.child("state").setValue("comming");
+        }
 
         eventListener=ref_trip.child("state").addValueEventListener(new ValueEventListener() {
             @Override
@@ -538,6 +548,8 @@ public class DriverHomeActivity extends AppCompatActivity implements OnMapReadyC
                         key_client = null;
                         user_location = null;
                         findRoutes = null;
+                        arrived=false;
+                        tripCompleted=false;
                         polylines=null;
                         Toast.makeText(DriverHomeActivity.this, "El viaje fue cancelado.", Toast.LENGTH_SHORT).show();
                         ref_trip.child("state").removeEventListener(eventListener);
@@ -557,8 +569,14 @@ public class DriverHomeActivity extends AppCompatActivity implements OnMapReadyC
                         ref_user.child("trip").setValue("null");
                         ref_user.child("trip_user").setValue("null");
                         m=null;
+                        arrived=false;
+                        tripCompleted=false;
                         iv_directions.setVisibility(View.GONE);
                         btn_cancel_trip.setVisibility(View.GONE);
+                    }
+
+                    else if(state.equals("driving")){
+                        driverArrived(false);
                     }
                 }
             }
@@ -624,7 +642,7 @@ public class DriverHomeActivity extends AppCompatActivity implements OnMapReadyC
                 if(snapshot.exists()){
                     final String id_trip = snapshot.getValue(String.class);
                     if(!id_trip.equals("null") && id_client_ck!=null){
-                        DatabaseReference ref_trip = database.getReference("Trips").child(id_client_ck).child(id_trip);
+                        final DatabaseReference ref_trip = database.getReference("Trips").child(id_client_ck).child(id_trip);
                         ref_trip.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -671,4 +689,21 @@ public class DriverHomeActivity extends AppCompatActivity implements OnMapReadyC
         });
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case Constantes.MY_PERMISSION_REQUEST_FINE_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //Permiso aceptado, llamando a sendUbication
+                    getLastLocation();
+                    
+                } else {
+                    //Permiso denegado
+                    Toast.makeText(this, "Permiso denegado.", Toast.LENGTH_SHORT).show();
+                }
+                return;
+        }
+    }
 }

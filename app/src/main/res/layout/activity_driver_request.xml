@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ClientHome.DriverRequestActivity">
+    tools:context="uberapp.balran.uberapp.clientHome.DriverRequestActivity">
 
     <fragment
         android:id="@+id/map_driver_request"

@@ -1,4 +1,4 @@
-package com.example.uberapp;
+package uberapp.balran.uberapp;
 
 import org.junit.Test;
 

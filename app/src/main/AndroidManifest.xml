@@ -15,8 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ClientHome.TripActivity"></activity>
-        <activity android:name=".ClientHome.DriverRequestActivity" />
+        <activity android:name="uberapp.balran.uberapp.clientHome.TripActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name="uberapp.balran.uberapp.clientHome.DriverRequestActivity"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -25,30 +27,31 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDhfhc8lj95UVEdPLVZY1eWD8SLwpTW4cc" />
 
-        <activity android:name=".DriverHomeActivity" />
+        <activity android:name="uberapp.balran.uberapp.DriverHomeActivity"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".Login.DriverRegisterActivity"
+            android:name="uberapp.balran.uberapp.login.DriverRegisterActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Login.DataDriverActivity"
+            android:name="uberapp.balran.uberapp.login.DataDriverActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ClientHome.HomeActivity"
+            android:name="uberapp.balran.uberapp.clientHome.HomeActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Login.SelectTypeActivity"
+            android:name="uberapp.balran.uberapp.login.SelectTypeActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Login.RegisterActivity"
+            android:name="uberapp.balran.uberapp.login.RegisterActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Login.LoginActivity"
+            android:name="uberapp.balran.uberapp.login.LoginActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Login.MainActivity"
+            android:name="uberapp.balran.uberapp.login.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -58,7 +61,7 @@
         </activity>
 
         <service
-            android:name=".Utilities.FCM"
+            android:name="uberapp.balran.uberapp.utilities.FCM"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

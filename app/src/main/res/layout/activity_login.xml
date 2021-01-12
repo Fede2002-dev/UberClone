@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_register"
-    tools:context=".Login.LoginActivity">
+    tools:context="uberapp.balran.uberapp.login.LoginActivity">
 
     <TextView
         android:id="@+id/tv_register"

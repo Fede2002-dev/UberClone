@@ -1,4 +1,4 @@
-package com.example.uberapp.Login;
+package uberapp.balran.uberapp.login;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -6,8 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.uberapp.DriverHomeActivity;
-import com.example.uberapp.ClientHome.HomeActivity;
+import uberapp.balran.uberapp.DriverHomeActivity;
+import uberapp.balran.uberapp.clientHome.HomeActivity;
 import com.example.uberapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,8 +24,12 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference ref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.SplashTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
         //Iniciando firebase
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();

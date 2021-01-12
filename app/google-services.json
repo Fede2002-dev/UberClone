@@ -8,6 +8,43 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:100214948993:android:1c1d9d0af615b4b2a63980",
+        "android_client_info": {
+          "package_name": "com.balran.uberapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "100214948993-k4a1200ojhbshcgkj1hqigbgh3695ski.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.balran.uberapp",
+            "certificate_hash": "10baec5cc0c248f0560e5b413c264e03cb23b62f"
+          }
+        },
+        {
+          "client_id": "100214948993-e6jlkt7k3bno0crsiql24373i884g4iq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZy-H2kD9SVy5TNLMThJ1EONhCyeuUMxg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "100214948993-e6jlkt7k3bno0crsiql24373i884g4iq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:100214948993:android:68ebb2f0c77da09ea63980",
         "android_client_info": {
           "package_name": "com.example.uberapp"
