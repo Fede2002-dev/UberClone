@@ -1,7 +1,7 @@
-## UberClone
+# UberClone
 This an app that tries replicate the principal Uber functions. It's builded with Google Directions Api, Google Maps API, and geocoders API.
 
-## Preview
+# Preview
 
 ## Login screens:
 
